@@ -58,6 +58,7 @@ txtinstallmenu="Menu di installazione"
 txtarchinstallmenu="Menu di installazione di Arch"
 txtrungrubmakeconfig="Eseguire grub-mkconfig ?"
 
+txtgeneratemirrorlist="Generate a fast localized mirrorlist"
 txteditmirrorlist="Modifica mirrorlist"
 txtinstallarchlinux="Installa Arch Linux"
 txtconfigarchlinux="Configura Arch Linux"

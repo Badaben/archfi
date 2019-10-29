@@ -146,6 +146,7 @@ chooseeditor(){
   if [ "$?" = "0" ]; then
     clear
     echo "export EDITOR=${sel}"
+    
     export EDITOR=${sel}
     EDITOR=${sel}
     pressanykey
@@ -748,14 +749,19 @@ installmenu(){
     nextitem=${1}
   fi
   options=()
-  options+=("${txteditmirrorlist}" "(${txtoptional})")
-  options+=("${txtinstallarchlinux}" "pacstrap base linux")
-  options+=("${txtconfigarchlinux}" "")
+  options+=("${txtgeneratemirrorlist}" "  (${txtoptional})")
+  options+=("${txteditmirrorlist}" "  (${txtoptional})")
+  options+=("${txtinstallarchlinux}" "  pacstrap base linux")
+  options+=("${txtconfigarchlinux}" "  ")
   sel=$(whiptail --backtitle "${apptitle}" --title "${txtinstallmenu}" --menu "" --cancel-button "${txtunmount}" --default-item "${nextitem}" 0 0 0 \
     "${options[@]}" \
     3>&1 1>&2 2>&3)
   if [ "$?" = "0" ]; then
     case ${sel} in
+      "${txtgeneratemirrorlist}")
+        bettermirrorlist
+        nextitem="${txtinstallarchlinux}"
+      ;;
       "${txteditmirrorlist}")
         ${EDITOR} /etc/pacman.d/mirrorlist
         nextitem="${txtinstallarchlinux}"
@@ -773,6 +779,60 @@ installmenu(){
   else
     unmountdevices
   fi
+}
+
+bettermirrorlist(){
+  options=()      
+  curl -o /tmp/mirrors https://www.archlinux.org/mirrorlist/
+  #options=("ALL" "All mirrors" "    ")
+  OLDIFS=$IFS
+  IFS=','	
+  
+  items=$(cat /tmp/mirrors | grep "<option" | grep -v selected | sed -e 's/<option value="//' -e 's/<\/option>//' -e 's/">/;/' -e 's/^ *//')
+  readarray -t ARR <<< "$items"
+  
+  for ((i=0;i<=${#ARR[@]} - 1;i++)) do
+    code=$(echo ${ARR[$i]} | cut -d';' -f1  )
+    region=$(echo ${ARR[$i]} | cut -d';' -f2 )
+    options+=("$code" "$region" "")  
+  done
+  
+  IFS=$OLDIFS
+
+  country=$(whiptail --backtitle "${apptitle}" --title "Choose mirrorlist region" --checklist "" 0 0 0 \
+    "${options[@]}" \
+    3>&1 1>&2 2>&3)
+    
+  if [ "$?" = "0" ]; then
+    clear
+    
+	a=0
+	for item in ${country}; do
+		if [[ $a == 0 ]]; then
+			countries="?country=$item"
+			a=1
+		else
+			countries="${countries}&country=${item}"
+		fi
+			
+	done
+	
+	countries=$(echo ${countries} | sed 's/"//g')
+	countries="${countries}&protocol=http&protocol=https&ip_version=4&use_mirror_status=off"
+    
+	echo "curl -o /tmp/mirrorlist https://www.archlinux.org/mirrorlist/${countries}"
+	curl -o /tmp/mirrorlist https://www.archlinux.org/mirrorlist/${countries}
+	
+	
+	echo "sed -i 's/#S/S/g' /tmp/mirrorlist"
+	sed -i 's/#S/S/g' /tmp/mirrorlist
+	
+	echo "rankmirrors /tmp/mirrorlist > /etc/pacman.d/mirrorlist"
+	rankmirrors /tmp/mirrorlist > /etc/pacman.d/mirrorlist
+    
+    pressanykey
+  fi
+
 }
 
 installbase(){
@@ -1749,6 +1809,7 @@ loadstrings(){
 
   txtarchinstallmenu="Arch Install Menu"
 
+  txtgeneratemirrorlist="Generate fast mirrorlist"
   txteditmirrorlist="Edit mirrorlist"
   txtinstallarchlinux="Install Arch Linux"
   txtconfigarchlinux="Config Arch Linux"

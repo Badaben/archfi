@@ -58,6 +58,7 @@ txtinstallmenu="Menu Installation"
 
 txtarchinstallmenu="Menu Installation Arch Linux"
 
+txtgeneratemirrorlist="Générer une mirrorlist localisée et rapide"
 txteditmirrorlist="Éditer mirrorlist"
 txtinstallarchlinux="Installer Arch Linux"
 txtconfigarchlinux="Configurer Arch Linux"

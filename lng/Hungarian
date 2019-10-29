@@ -58,7 +58,8 @@ txtinstallmenu="Telepítő menü"
   
 txtarchinstallmenu="Arch Telepítő menü"
 txtrungrubmakeconfig="grub-mkconfig futtatása ?"
-  
+
+txtgeneratemirrorlist="Generate a fast localized mirrorlist"
 txteditmirrorlist="Edit mirrorlist"
 txtinstallarchlinux="Arch Linux telepítés"
 txtconfigarchlinux="Arch Linux beállítások"

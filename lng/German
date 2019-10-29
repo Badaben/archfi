@@ -59,6 +59,7 @@ txtinstallmenu="Installationsmenü"
 txtarchinstallmenu="Arch Installationsmenü"
 txtrungrubmakeconfig="grub-mkconfig ausführen?"
 
+txtgeneratemirrorlist="Generate a fast localized mirrorlist"
 txteditmirrorlist="Spiegelserver-Liste editieren"
 txtinstallarchlinux="Arch Linux installieren"
 txtconfigarchlinux="Arch Linux konfigurieren"
